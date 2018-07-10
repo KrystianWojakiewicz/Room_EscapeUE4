@@ -1,7 +1,8 @@
-ROOM_ESCAPE/room_escape/Content/StarterContent/
+ROOM_ESCAPE/room_escape/Content/
 ROOM_ESCAPE/room_escape/Intermediate/
 ROOM_ESCAPE/room_escape/Binaries/
 *.db
 *.opendb
 ROOM_ESCAPE/room_escape/Saved/
 *.sln
+*.ipch
