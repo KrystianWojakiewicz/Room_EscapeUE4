@@ -3,6 +3,19 @@
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
 
+////////////Functions
+void UOpenDoor::OpenDoor()
+{
+	AActor* Owner = GetOwner();
+	FRotator ObjectRot = Owner->GetActorRotation();
+	FRotator NewRot(0.f, -60.f, 0.f);
+	if (!Owner->SetActorRotation(NewRot, ETeleportType::None)) {
+		UE_LOG(LogTemp, Warning, TEXT("Could not open door"));
+	}
+}
+////////////////////////////////
+
+
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
 {
@@ -19,20 +32,19 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Owner = GetOwner();
-	FRotator ObjectRot = Owner->GetActorRotation();
-
-	if (!Owner->SetActorRotation(ObjectRot.Add(0.f, -90.f, 0.f), ETeleportType::None)) {
-		UE_LOG(LogTemp, Warning, TEXT("Could not rotate"));
-	}
+	
 }
+
+
 
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+		OpenDoor();
+	}
+	
 }
 

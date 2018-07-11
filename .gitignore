@@ -6,3 +6,5 @@ ROOM_ESCAPE/room_escape/Binaries/
 ROOM_ESCAPE/room_escape/Saved/
 *.sln
 *.ipch
+*.db-shm
+*.db-wal
