@@ -2,15 +2,22 @@
 
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 ////////////Functions
 void UOpenDoor::OpenDoor()
 {
-	AActor* Owner = GetOwner();
-	FRotator ObjectRot = Owner->GetActorRotation();
-	FRotator NewRot(0.f, -60.f, 0.f);
+	FRotator NewRot(0.f, OpenAngle, 0.f);
 	if (!Owner->SetActorRotation(NewRot, ETeleportType::None)) {
 		UE_LOG(LogTemp, Warning, TEXT("Could not open door"));
+	}
+}
+
+void UOpenDoor::CloseDoor()
+{
+	FRotator NewRot(0.f, 0.f, 0.f);
+	if (!Owner->SetActorRotation(NewRot, ETeleportType::None)) {
+		UE_LOG(LogTemp, Warning, TEXT("Could not close door"));
 	}
 }
 ////////////////////////////////
@@ -32,7 +39,8 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	Owner = GetOwner();
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 
@@ -42,9 +50,17 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
 		OpenDoor();
+		LastOpenTime = GetWorld()->GetTimeSeconds();
 	}
 	
+	CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if (CurrentTime - LastOpenTime >= DoorCloseDelay) {
+		CloseDoor();
+
+	}
 }
 
