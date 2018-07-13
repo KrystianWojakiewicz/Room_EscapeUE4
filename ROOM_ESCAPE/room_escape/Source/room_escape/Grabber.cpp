@@ -3,6 +3,7 @@
 #include "Grabber.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 #define OUT
 
@@ -48,5 +49,17 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	UE_LOG(LogTemp, Warning, TEXT("Player Location is %s"), *PlayerLoc);
 	UE_LOG(LogTemp, Error, TEXT("  Player View is %s"), *PlayerView);
 	*/
+	FVector LineTraceEnd = PlayerViewLoc + PlayerViewRot.Vector() * Reach;
+	DrawDebugLine(
+		GetWorld(),
+		PlayerViewLoc,
+		LineTraceEnd,
+		FColor(255, 0, 0),
+		false,
+		0.f,
+		0.f,
+		25.f
+	);
+
 }
 
