@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsHandleComponent.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Grabber.generated.h"
@@ -24,9 +25,20 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
 private:
 
 	UPROPERTY(EditAnywhere)
 		float Reach = 100.f;
 	
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	UInputComponent* InputComponent = nullptr;
+	AActor* Owner;
+
+	void Grab(); // Action input "Grab"
+	void Release(); // Action input "Grab"
+	void FindPhysicsHandleComponent(); // Checks if Physics Handle component is attached
+	void FindInputComponent(); // Checks if Input component is attached and if so deal with potential input
+	void DebugLine(FVector&, FVector&); // Draws a red 3D line horizontally from Pawn
+	FHitResult GetFirstPhysicsBodyInReach() const; // Checks for collision and returns the first PhysicsBody Hit
 };
