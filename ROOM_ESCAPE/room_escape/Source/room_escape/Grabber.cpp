@@ -7,24 +7,37 @@
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 #include "Runtime/Engine/Public/CollisionQueryParams.h"
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
+#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsHandleComponent.h"
+#include "Runtime/Engine/Classes/Components/PrimitiveComponent.h"
 
 #define OUT
 
 //FUNCTIONS
 void UGrabber::Grab() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"));
-	GetFirstPhysicsBodyInReach();
+	
+	FHitResult Hit = GetFirstPhysicsBodyInReach();
+	UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
+	AActor* ActorHit = Hit.GetActor();
+
+	if (ActorHit) {
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(), // what point of component to grab
+			true // To enable rotation 
+		);
+	}
 }
 
 void UGrabber::Release() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab released"));
+
+	PhysicsHandle->ReleaseComponent();
 }
 
 void UGrabber::FindPhysicsHandleComponent() {
 	
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle) { ; }
-	else {
+	if (PhysicsHandle == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Physics Handle not found in object %s"), *Owner->GetName())
 	}
 }
@@ -57,9 +70,7 @@ void UGrabber::DebugLine(FVector &PlayerViewLoc, FVector &LineTraceEnd) {
 	);
 }
 
- 
-FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
-	
+FVector UGrabber::FindStartOfLineTrace() const {
 	FVector PlayerViewLoc;
 	FRotator PlayerViewRot;
 
@@ -69,16 +80,35 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
 		OUT PlayerViewRot
 	);
 
-	// Gets coordinates of maximimum reach
-	FVector LineTraceEnd = PlayerViewLoc + PlayerViewRot.Vector() * Reach;
+	// return coordinates of maximimum reach
+	return PlayerViewLoc;
+
+}
+
+FVector UGrabber::FindEndOfLineTrace() const {
+FVector PlayerViewLoc;
+FRotator PlayerViewRot;
+
+//Get player location and rotation
+GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+	OUT PlayerViewLoc,
+	OUT PlayerViewRot
+);
+
+// return coordinates of maximimum reach
+return PlayerViewLoc + PlayerViewRot.Vector() * Reach;
+
+}
+
+FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
+	
 	FHitResult Hit;
 	FCollisionQueryParams TraceParamenters(FName(TEXT("")), false, GetOwner());
-	
 	// Check collison	
 	bool bTrace = GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
-		PlayerViewLoc,
-		LineTraceEnd,
+		FindStartOfLineTrace(),
+		FindEndOfLineTrace(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParamenters
 	);
@@ -88,7 +118,7 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const {
 		FString ActorHit = Hit.GetActor()->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("COLLISON WITH OBJECT %s"), *ActorHit);
 	}
-	return FHitResult();
+	return Hit;
 }
 ////////////////////////////////////////END OF FUNCTIONS////////////////////////////////////////////
 
@@ -124,9 +154,14 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 
-	//TODO If collision detected and grab is pressed
-		//Move grabbed object every frame
+	if (PhysicsHandle->GrabbedComponent && PhysicsHandle) {
+		PhysicsHandle->SetTargetLocation(FindEndOfLineTrace()); //Move grabbed object every frame
+		
+	}
+	
+		
 }
 
 

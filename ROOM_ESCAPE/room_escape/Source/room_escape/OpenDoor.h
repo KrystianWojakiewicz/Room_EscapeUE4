@@ -27,7 +27,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
 private:
+
+	float GetMassOfActorsStanding(); // Gets total mass of all actors standing on the pressure plate
 
 	UPROPERTY(VisibleAnywhere)
 		float OpenAngle = -60.f;
@@ -38,8 +41,10 @@ private:
 	UPROPERTY(EditAnywhere)
 		float DoorCloseDelay = 1.f;
 
+	UPROPERTY(EditAnywhere)
+		float TriggerMass = 50.f;
+
 	float LastOpenTime;
 	float CurrentTime;
 	AActor* Owner;
-	AActor* ActorThatOpens;
 };
