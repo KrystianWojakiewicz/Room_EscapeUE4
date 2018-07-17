@@ -9,20 +9,25 @@
 
 ////////////Functions//////////////////////////////////////////////////////
 
+
 void UOpenDoor::OpenDoor()
 {
+	/*
 	FRotator NewRot(0.f, OpenAngle, 0.f);
 	if (!Owner->SetActorRotation(NewRot, ETeleportType::None)) {
 		UE_LOG(LogTemp, Warning, TEXT("Could not open door"));
 	}
+	*/
 }
 
 void UOpenDoor::CloseDoor()
 {
+	/*
 	FRotator NewRot(0.f, 0.f, 0.f);
 	if (!Owner->SetActorRotation(NewRot, ETeleportType::None)) {
 		UE_LOG(LogTemp, Warning, TEXT("Could not close door"));
 	}
+	*/
 }
 
 float UOpenDoor::GetMassOfActorsStanding() {
@@ -60,8 +65,6 @@ UOpenDoor::UOpenDoor()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -85,14 +88,14 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	if (GetMassOfActorsStanding() > TriggerMass) {
-		OpenDoor();
+		OpenRequest.Broadcast();
 		LastOpenTime = GetWorld()->GetTimeSeconds();
 	}
 	
 	CurrentTime = GetWorld()->GetTimeSeconds();
 
 	if (CurrentTime - LastOpenTime >= DoorCloseDelay) {
-		CloseDoor();
+		CloseRequest.Broadcast();
 
 	}
 }
