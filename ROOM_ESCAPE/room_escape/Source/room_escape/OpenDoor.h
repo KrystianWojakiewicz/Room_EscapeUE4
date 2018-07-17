@@ -30,13 +30,13 @@ public:
 
 private:
 
-	float GetMassOfActorsStanding(); // Gets total mass of all actors standing on the pressure plate
+	float GetMassOfActorsStanding(); // Gets total mass and names of all actors standing on the pressure plate and logs it
 
 	UPROPERTY(VisibleAnywhere)
-		float OpenAngle = -60.f;
+		float OpenAngle = -90.f;
 
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate;
+		ATriggerVolume* PressurePlate = nullptr;
 	
 	UPROPERTY(EditAnywhere)
 		float DoorCloseDelay = 1.f;
@@ -46,5 +46,5 @@ private:
 
 	float LastOpenTime;
 	float CurrentTime;
-	AActor* Owner;
+	AActor* Owner = nullptr;
 };

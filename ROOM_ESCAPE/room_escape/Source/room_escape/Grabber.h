@@ -33,7 +33,7 @@ private:
 	
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 	UInputComponent* InputComponent = nullptr;
-	AActor* Owner;
+	AActor* Owner = nullptr;
 	
 	void Grab(); // Action input "Grab"
 	void Release(); // Action input "Grab"
