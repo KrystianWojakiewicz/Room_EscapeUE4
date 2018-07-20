@@ -9,3 +9,7 @@ ROOM_ESCAPE/room_escape/Saved/
 *.ipch
 *.db-shm
 *.db-wal
+room_escape/Intermediate/
+room_escape/Saved/
+room_escape/Content/StarterContent/
+room_escape/Binaries/
