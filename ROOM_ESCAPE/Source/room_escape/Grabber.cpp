@@ -147,7 +147,6 @@ void UGrabber::BeginPlay()
 
 	FindPhysicsHandleComponent();
 	FindInputComponent();
-	
 }
 
 
